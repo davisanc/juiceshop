@@ -1,0 +1,39 @@
+{
+  "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+  "contentVersion": "1.0.0.0", 
+  "variables": {
+    "Site-Name1": "[concat('juiceshop','-', uniqueString(resourceGroup().id))]",
+  },
+  "resources": [  
+      {
+      "type": "Microsoft.Web/sites",
+      "apiVersion": "2018-11-01",
+      "name": "[variables('Site-Name1')]",
+      "location": "[resourceGroup().location]",
+      "dependsOn": [
+        "[concat('Microsoft.Web/serverfarms/', variables('Site-HPN'))]"
+      ],
+      "tags": {},
+      "properties": {
+        "name": "[variables('Site-Name1')]",
+        "siteConfig": {
+          "appSettings": [
+            {
+              "name": "DOCKER_REGISTRY_SERVER_URL",
+              "value": "https://index.docker.io"
+            },
+            {
+              "name": "WEBSITES_ENABLE_APP_SERVICE_STORAGE",
+              "value": "false"
+            }
+          ],
+          "linuxFxVersion": "DOCKER|mohitkusecurity/juice-shop-updated",
+          "alwaysOn": true
+        },
+        "serverFarmId": "[concat(resourceGroup().id, '/providers/Microsoft.Web/serverfarms/', variables('Site-HPN'))]",
+        "clientAffinityEnabled": false
+      }
+    }  
+  ],
+    "outputs": {}
+  }
